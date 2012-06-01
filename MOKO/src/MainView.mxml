@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"  creationComplete="group1_creationCompleteHandler(event)"
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			[Bindable]
+			private var loading:Boolean;
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				//usermingzi=lhw1987654%40163.com&userkey=1bb2bb3bb&isremember=on
+				var data:URLVariables = new URLVariables();
+				data.usermingzi = user.text;
+				data.userkey = pass.text;
+				data.isremember = "on";
+				var req:URLRequest = new URLRequest();
+				req.followRedirects=false;
+				req.url = 'http://www.moko.cc/jsps/common/login.action?tourl=http%3A//www.moko.cc/';
+				req.data = data;
+				req.method = URLRequestMethod.POST;
+				var urlloader:URLLoader = new URLLoader();
+				urlloader.addEventListener(Event.COMPLETE, onComplete);
+				urlloader.addEventListener(IOErrorEvent.IO_ERROR,onComplete);
+				urlloader.addEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, onHttpResponseStatus);
+				urlloader.load(req);
+				loading=true;
+			}
+			
+			protected function onComplete(event:Event):void
+			{
+				loading=false;
+				var urlloader:URLLoader =  URLLoader(event.target);
+				urlloader.removeEventListener(Event.COMPLETE, onComplete);
+				urlloader.removeEventListener(IOErrorEvent.IO_ERROR,onComplete);
+				//trace('LOGIN:\n'+urlloader.data);
+				this.dispatchEvent(new Event(Event.COMPLETE));
+			}
+			
+			protected function onHttpResponseStatus(event:HTTPStatusEvent):void
+			{
+				for each (var i:URLRequestHeader  in event.responseHeaders) 
+				{
+					trace(i.name+"="+i.value);
+					if(i.name.toLowerCase()==""){
+						
+					}
+				}
+				
+				
+			}
+			
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				button1_clickHandler(null);
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Metadata>
+		[Event(name="complete", type="flash.events.Event")]
+	</fx:Metadata>
+	<s:Form verticalCenter="0" horizontalCenter="0" visible="false">
+		<s:Label text="登陆" />
+		<s:TextInput id="user" text="ceshi1234567890@gmail.com" enabled="{!loading}" />
+		<s:TextInput id="pass" text="ceshi1234567890@gmail.com" displayAsPassword="true" enabled="{!loading}" />
+		<s:Button label="登陆" click="button1_clickHandler(event)" enabled="{!loading}" />
+	</s:Form>
+	
+	<s:Label fontSize="46" horizontalCenter="0" color="0x666666" text="免费美空图片批量下载器" verticalCenter="0"/>
+	
+	
+</s:Group>
