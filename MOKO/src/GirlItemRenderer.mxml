@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true">
+	
+	<s:layout>
+		<s:HorizontalLayout paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" />
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			override public function  set data(value:Object):void{
+				super.data=value;
+				if(data.logo && data.logo.indexOf('http')==0){
+					var req:URLRequest = new URLRequest(data.logo);
+					req.requestHeaders = [new URLRequestHeader("Referer", "http://www.moko.cc")];
+					
+					var loader:Loader = new Loader();
+					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaded);
+					loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded);
+					loader.load(req);
+				}
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				Model.thumbup(data.id);
+				
+			}
+			
+			protected function onLoaded(event:Event):void
+			{
+				var loader:Loader =  LoaderInfo(event.target).loader;
+				loader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onLoaded);
+				loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onLoaded);
+				if(event.type==Event.COMPLETE){
+					var bm:Bitmap = Bitmap(loader.content);
+					img.source = bm;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Image id="img" source="{data.logo}" width="48" height="48" smooth="true" scaleMode="letterbox" />
+	<s:VGroup width="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+		<s:Label width="100%" text="    {data.name}" />
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label  text="下载次数: {data.count}"/>
+			<s:Spacer width="100%" />
+			<s:Button  label="赞{data.thumbup}" click="button1_clickHandler(event)"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:ItemRenderer>

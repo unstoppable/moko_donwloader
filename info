@@ -1,0 +1,25 @@
+Global setup:
+ Set up git
+  git config --global user.name "Liu Hongwei"
+  git config --global user.email lhw198765@gmail.com
+      
+Next steps:
+  mkdir moko_donwloader
+  cd moko_donwloader
+  git init
+  touch README
+  git add README
+  git commit -m 'first commit'
+  git remote add origin git@github.com:unstoppable/moko_donwloader.git
+  git push -u origin master
+      
+Existing Git Repo?
+  cd existing_git_repo
+  git remote add origin git@github.com:unstoppable/moko_donwloader.git
+  git push -u origin master
+      
+Importing a Subversion Repo?
+  Check out the guide for step by step instructions.
+      
+When you're done:
+  Continue

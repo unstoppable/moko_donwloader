@@ -2,7 +2,7 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  applicationComplete="applicationCompleteHandler(event)"
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   showStatusBar="false" fontFamily="微软雅黑" 
-					   xmlns:mx="library://ns.adobe.com/flex/mx" width="960" height="640" xmlns:local="*">
+					   xmlns:mx="library://ns.adobe.com/flex/mx" width="1000" height="640" xmlns:local="*">
 	
 	<fx:Script>
 		<![CDATA[
@@ -24,6 +24,7 @@
 				URLRequestDefaults.userAgent='Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.46 Safari/536.5';
 				initLogging();
 				this.checkUpdate();
+				Model.getList();
 			}
 			protected var appUpdater:ApplicationUpdaterUI=new ApplicationUpdaterUI(); // Used for auto-update
 			
