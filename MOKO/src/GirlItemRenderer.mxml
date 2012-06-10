@@ -41,11 +41,29 @@
 				}
 			}
 			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent(new Event(Event.CONTEXT3D_CREATE,true,true));
+				
+			}
+			
 		]]>
 	</fx:Script>
-	<s:Image id="img" source="{data.logo}" width="48" height="48" smooth="true" scaleMode="letterbox" />
+	<s:Group width="48" height="48">
+		<s:Rect width="48" height="48">
+			<s:fill>
+				<s:SolidColor color="0x808080" />
+			</s:fill>
+		</s:Rect>
+		<s:Image id="img" source="{data.logo}" width="48" height="48" smooth="true" scaleMode="letterbox" showEffect="fadeIn" />
+	</s:Group>
 	<s:VGroup width="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
-		<s:Label width="100%" text="    {data.name}" />
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label width="100%" text="    {data.name}" />
+			<s:Spacer width="100%" />
+			<s:Button  label="下载" click="button2_clickHandler(event)"/>
+		</s:HGroup>
+		
 		<s:HGroup width="100%" verticalAlign="middle">
 			<s:Label  text="下载次数: {data.count}"/>
 			<s:Spacer width="100%" />

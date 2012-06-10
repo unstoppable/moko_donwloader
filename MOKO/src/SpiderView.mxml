@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="vgroup1_creationCompleteHandler(event)"
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="vgroup1_creationCompleteHandler(event)"
 		  width="100%" height="100%" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
 
 	<fx:Script>
@@ -309,6 +310,7 @@
 					user=so.data.user;
 				}
 				so.close();
+				this.addEventListener(Event.CONTEXT3D_CREATE, onselect);
 			}
 
 			protected function help(event:MouseEvent):void
@@ -317,26 +319,23 @@
 
 			}
 			
-			protected function list1_changeHandler(event:IndexChangeEvent):void
+			protected function onselect(event:Event):void
 			{
-				// TODO Auto-generated method stub
-				
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				var data:* = GirlItemRenderer(event.target).data;
+				user = data.url.replace('http:\/\/www.moko.cc\/post\/','').replace('\/list.html','');
+				start(null);
 			}
 			
-			protected function onselect(event:MouseEvent):void
-			{
-				var p:DisplayObject = DisplayObject(event.target);
-				while(p){
-					if(p is GirlItemRenderer){
-						break;
-					}
-					p = p.parent;
+			protected function buttonbar1_changeHandler(event:IndexChangeEvent):void
+			{	var a:ArrayCollection  = Model.getModel().list;
+				if(event.newIndex==0){
+					a.source.sortOn('count',Array.DESCENDING | Array.NUMERIC);
+				}else{
+					a.source.sortOn('thumbup',Array.DESCENDING | Array.NUMERIC);
 				}
-				if(p){
-					var data:* = GirlItemRenderer(p).data;
-					user = data.url.replace('http:\/\/www.moko.cc\/post\/','').replace('\/list.html','');
-					start(null);
-				}
+				Model.getModel().list.refresh();
 			}
 			
 		]]>
@@ -348,8 +347,21 @@
 	<fx:Metadata>
 		[Event(name="cancel", type="flash.events.Event")]
 	</fx:Metadata>
-	<s:List dataProvider="{Model.getModel().list}" width="300" height="100%" doubleClickEnabled="true" doubleClick="onselect(event)" change="list1_changeHandler(event)" itemRenderer="GirlItemRenderer">
-	</s:List>
+	<s:VGroup width="300" height="100%">
+		<s:HGroup width="100%" verticalAlign="middle" >
+			<s:Label text="排序    " />
+			<s:ButtonBar selectedIndex="0" change="buttonbar1_changeHandler(event)">
+				<s:dataProvider>
+					<s:ArrayList>
+						<fx:String>推荐次数</fx:String>
+						<fx:String>下载次数</fx:String>
+					</s:ArrayList>
+				</s:dataProvider>
+			</s:ButtonBar>
+		</s:HGroup>
+		<s:List dataProvider="{Model.getModel().list}" width="100%" height="100%" itemRenderer="GirlItemRenderer">
+		</s:List>
+	</s:VGroup>
 	<s:VGroup id="view" width="100%" height="100%">
 		<s:HGroup width="100%" verticalAlign="middle">
 			<s:Label text="用户主页地址:"/>
