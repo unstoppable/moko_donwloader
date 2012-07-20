@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="160" height="230" autoDrawBackground="false">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.raisedtech.moko.model.Model;
+			private var loader:Loader = new Loader();
+			override public function  set data(value:Object):void{
+				super.data=value;
+				if(img) img.visible=false
+				if(data.logo && data.logo.indexOf('http')==0){
+					
+					var req:URLRequest = new URLRequest(data.logo);
+					req.requestHeaders = [new URLRequestHeader("Referer", "http://www.moko.cc")];
+					
+					try
+					{
+						loader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onLoaded);
+						loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onLoaded);
+						loader.close();
+					} 
+					catch(error:Error) 
+					{
+						
+					}
+					
+					loader = new Loader();
+					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaded);
+					loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded);
+					loader.load(req);
+				}
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				Model.thumbup(data.id);
+				
+			}
+			
+			protected function onLoaded(event:Event):void
+			{
+				var loader:Loader =  LoaderInfo(event.target).loader;
+				if(event.type==Event.COMPLETE){
+					var bm:Bitmap = Bitmap(loader.content);
+					img.source = bm;
+					img.visible=true;
+				}
+			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent(new Event(Event.CONTEXT3D_CREATE,true,true));
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:Fade id="fade" alphaFrom="0" alphaTo="1" duration="1000" target="{img}" />
+	</fx:Declarations>
+	<s:Group left="5" right="5" top="5" bottom="5">
+		
+		<s:Rect left="0" right="0" top="0" bottom="0">
+			<s:fill>
+				<s:SolidColor color="0xffffff" alpha="1"/>
+			</s:fill>
+			
+			<s:filters>
+				<s:DropShadowFilter blurX="5" blurY="5" distance="1"  angle="45" alpha="0.5" />
+			</s:filters>
+		</s:Rect>
+		
+		<s:Image id="img" showEffect="{fade}" x="10" y="10" width="130" height="140"
+				 smooth="true" visible="false"/>
+		
+		<s:Label width="100%" text="{data.name}" y="160" left="10"/>
+		<s:Button  y="160" right="10" label="赞{data.thumbup}" click="button1_clickHandler(event)"
+				  icon="@Embed('../assets/icons/16x16/thumb_up.png')"/>
+		
+		<s:Button y="190" left="10" label="下载{data.count}" click="button2_clickHandler(event)"
+					  icon="@Embed('../assets/icons/16x16/box_down.png')"/>	
+	</s:Group>
+	
+</s:ItemRenderer>

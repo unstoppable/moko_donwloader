@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:local="*"
+		  width="100%" height="100%" creationComplete="vgroup1_creationCompleteHandler(event)"
+		  paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10" xmlns:view="com.raisedtech.moko.view.*">
+
+	<fx:Script>
+		<![CDATA[
+			import com.raisedtech.moko.SpiderDownloader;
+			import com.raisedtech.moko.model.Model;
+			import com.raisedtech.queueprocess.QueueProcessor;
+			
+			import flash.utils.setTimeout;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			private var downloader:SpiderDownloader
+			
+			[Bindable]
+			private var downloadView:Boolean=false;
+			
+			protected function start(event:Event):void
+			{
+				downloadView=true;
+				downloader.start();
+			}
+
+			protected function help(event:Event):void
+			{
+				this.dispatchEvent(new Event(Event.CANCEL));
+
+			}
+			
+			protected function onselect(event:Event):void
+			{
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				var data:* = GirlItemRenderer(event.target).data;
+				downloader.user = data.url.replace('http:\/\/www.moko.cc\/post\/','').replace('\/list.html','');
+				start(null);
+			}
+			
+			protected function vgroup1_creationCompleteHandler(event:FlexEvent):void
+			{
+				downloader= Model.getModel().downloader;
+				downloader.addEventListener(Event.CONNECT, onConnect);
+				downloader.addEventListener(Event.CLOSE, onClose);
+				
+				var so:SharedObject=SharedObject.getLocal("user");
+				if (so.data.user)
+				{
+					downloader.user=so.data.user;
+				}
+				so.close();
+				this.addEventListener(Event.CONTEXT3D_CREATE, onselect);
+			}
+			
+			protected function onConnect(event:Event):void
+			{
+				downloadView = true;
+			}
+			
+			protected function onClose(event:Event):void
+			{
+				downloadView = false;
+			}
+			
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Metadata>
+		[Event(name="cancel", type="flash.events.Event")]
+	</fx:Metadata>
+	
+	<view:AddressInputView width="100%" cancel="help(event)" complete="start(event)"
+							info="{downloader.info}" loading="{downloader.loading}"
+							user="@{downloader.user}" requesting="{Model.getModel().loading}"/>
+	
+	<s:Line width="100%">
+		<s:stroke>
+			<s:SolidColorStroke color="0xeeeeee" weight="1"/>
+		</s:stroke>
+	</s:Line>
+	
+	<s:Group width="100%" height="100%">
+		
+		<view:GirlTileView visible="{!downloadView}" width="100%" height="100%"/>
+		
+		<view:SpiderProgressView visible="{downloadView}" width="100%" height="100%"/>
+		
+	</s:Group>
+	
+</s:VGroup>

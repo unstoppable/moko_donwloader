@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="100%"  verticalAlign="middle">
+	
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			public var requesting:Boolean=false;
+			[Bindable]
+			public var loading:Boolean=false;
+			[Bindable]
+			public var user:String="aishangzhen";
+			[Bindable]
+			public var info:String="";
+			
+			protected function start(event:MouseEvent):void
+			{
+				this.dispatchEvent(new Event(Event.COMPLETE));
+				
+			}
+			
+			protected function help(event:MouseEvent):void
+			{
+				this.dispatchEvent(new Event(Event.CANCEL));
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Metadata>
+		[Event(name="cancel", type="flash.events.Event")]
+		[Event(name="complete", type="flash.events.Event")]
+	</fx:Metadata>
+	<s:Label text="用户主页地址:"/>
+	<s:HGroup gap="0">
+		<s:Image height="22" source="@Embed('../assets/icons/16x16/internet_explorer.png')"/>
+		<s:TextInput editable="false" text="http://www.moko.cc/" borderVisible="false"/>
+		<s:TextInput width="150" text="@{user}" restrict="^ :/"/>
+		<s:TextInput editable="false" text="/" borderVisible="false" width="20"/>
+	</s:HGroup>
+	<s:Button label="停止" click="start(event)" visible="{loading}" includeInLayout="{loading}"
+			  icon="@Embed('../assets/icons/16x16/stop.png')"/>
+	<s:Button label="开始" click="start(event)" visible="{!loading}" includeInLayout="{!loading}"
+			  icon="@Embed('../assets/icons/16x16/world.png')" enabled="{!requesting}"/>
+	<s:Label color="#FF0000" text="正在读取数据， 请稍后" visible="{requesting}" includeInLayout="{requesting}"/>
+	<s:Spacer width="100%" />
+	<s:Image source="@Embed('../assets/icons/16x16/information.png')" />
+	<s:Label color="#AB4747" text="{info}"/>
+	<s:Spacer width="100%" />
+	<s:Button label="帮助" click="help(event)" icon="@Embed('../assets/icons/16x16/help.png')"/>
+	
+</s:HGroup>

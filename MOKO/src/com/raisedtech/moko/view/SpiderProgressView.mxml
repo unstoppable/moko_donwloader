@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="vgroup1_creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.raisedtech.moko.SpiderDownloader;
+			import com.raisedtech.moko.model.Model;
+			import mx.events.FlexEvent;
+			[Bindable]
+			private var downloader:SpiderDownloader;
+			
+			protected function vgroup1_creationCompleteHandler(event:FlexEvent):void
+			{
+				downloader= Model.getModel().downloader;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:ButtonBar dataProvider="{vs}"/>
+	
+	<s:Group width="100%">
+		<s:Line id="sample" width="100%">
+			<s:stroke>
+				<s:SolidColorStroke color="0xeeeeee" weight="1"/>
+			</s:stroke>
+		</s:Line>
+		<s:Line width="{downloader.progress*sample.width}">
+			<s:stroke>
+				<s:SolidColorStroke color="0x339933" weight="2"/>
+			</s:stroke>
+		</s:Line>
+	</s:Group>
+	
+	<mx:ViewStack id="vs" width="100%" height="100%" selectedIndex="{downloader.viewIndex}">
+		<s:NavigatorContent width="100%" height="100%" label="展示列表">
+			<s:List width="100%" height="100%" dataProvider="{downloader.categorys}"
+					itemRenderer="com.raisedtech.moko.view.CategoryItemRenderer"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="专辑列表">
+			<s:List width="100%" height="100%" dataProvider="{downloader.albums}"
+					itemRenderer="com.raisedtech.moko.view.CategoryItemRenderer"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="照片列表">
+			<s:List width="100%" height="100%" dataProvider="{downloader.photos}"
+					itemRenderer="com.raisedtech.moko.view.CategoryItemRenderer"/>
+		</s:NavigatorContent>
+	</mx:ViewStack>
+</s:VGroup>

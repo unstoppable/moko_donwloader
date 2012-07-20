@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  applicationComplete="applicationCompleteHandler(event)"
-					   xmlns:s="library://ns.adobe.com/flex/spark" 
-					   showStatusBar="false" fontFamily="微软雅黑" 
-					   xmlns:mx="library://ns.adobe.com/flex/mx" width="1000" height="640" xmlns:local="*">
-	
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:local="*"
+					   width="1040" height="640"
+					   applicationComplete="applicationCompleteHandler(event)" fontFamily="微软雅黑"
+					   showStatusBar="false" xmlns:view="com.raisedtech.moko.view.*">
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		@namespace local "*";
+		s|List {
+			contentBackgroundAlpha : 0;
+		}
+	</fx:Style>
 	<fx:Script>
 		<![CDATA[
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.UpdateEvent;
 			
+			import com.raisedtech.moko.model.Model;
+			import com.raisedtech.moko.view.AddGirlView;
+			
 			import mx.events.FlexEvent;
 			import mx.logging.Log;
 			import mx.logging.LogEventLevel;
 			import mx.logging.targets.TraceTarget;
+			import mx.managers.PopUpManager;
+			
+			[Embed(source="../assets/BackgroundImage.png")]
+			private static var BG_IMAGE:Class;
+			
 			protected function mainview1_completeHandler(event:Event):void
 			{
 				login.visible=false;
@@ -25,6 +43,14 @@
 				initLogging();
 				this.checkUpdate();
 				Model.getList();
+				
+				var bg:Shape = new Shape();
+				bg.graphics.beginBitmapFill(Bitmap(new BG_IMAGE()).bitmapData);
+				bg.graphics.drawRect(0,0,3000,3000);
+				bg.graphics.endFill();
+				bgCanvas.addChild(bg);
+				
+				stage.addEventListener(KeyboardEvent.KEY_DOWN , onKeyDown);
 			}
 			protected var appUpdater:ApplicationUpdaterUI=new ApplicationUpdaterUI(); // Used for auto-update
 			
@@ -84,21 +110,41 @@
 				help.visible=true;
 			}
 			
+			protected function onKeyDown(event:KeyboardEvent):void
+			{
+				if(event.shiftKey && event.ctrlKey && event.altKey){
+					if(!AddGirlView.INSTANCE){
+						AddGirlView.INSTANCE=true;
+						PopUpManager.centerPopUp(PopUpManager.createPopUp(this,AddGirlView,true));
+					}
+				}
+			}
+			
 		]]>
 	</fx:Script>
 	
+	<s:SpriteVisualElement id="bgCanvas">
+		
+	</s:SpriteVisualElement>
+	<view:LoginView id="login" width="100%" height="100%"
+					 complete="mainview1_completeHandler(event)"/>
 	
-	<local:MainView id="login" width="100%" height="100%" complete="mainview1_completeHandler(event)" />
+	<view:MainView visible="{!login.visible}" width="100%" height="100%"
+					cancel="spiderview1_cancelHandler(event)"/>
 	
-	<local:SpiderView visible="{!login.visible}" width="100%" height="100%" cancel="spiderview1_cancelHandler(event)" />
-	<s:Group id="help" visible="false" width="100%" height="100%" >
-		<s:Rect width="100%" height="100%" >
+	<s:Group id="help" visible="false" width="100%" height="100%">
+		<s:Rect width="100%" height="100%">
 			<s:fill>
-				<s:SolidColor alpha="0.3" color="0" />
+				<s:SolidColor alpha="0.3" color="0"/>
 			</s:fill>
 		</s:Rect>
-		<s:Image smooth="true" source="@Embed('help.jpg')" x="0" y="40" />
-		<s:Button x="883" y="42" label="关闭" click="button1_clickHandler(event)" emphasized="true" chromeColor="0x22aa22"/>
+		<s:Image horizontalCenter="0" verticalCenter="0" source="@Embed('../assets/help.jpg')">
+			<s:filters>
+				<s:DropShadowFilter distance="1" />
+			</s:filters>
+		</s:Image>
+		<s:Button right="42" label="关闭" click="button1_clickHandler(event)" emphasized="true"
+				  icon="@Embed('../assets/icons/16x16/cancel.png')" verticalCenter="-148"/>
 	</s:Group>
 	
 </s:WindowedApplication>

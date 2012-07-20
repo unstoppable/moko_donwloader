@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"  
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="900" height="600">
+	<fx:Script>
+		<![CDATA[
+			import com.raisedtech.moko.model.NewGirlUrlVOTask;
+			import com.raisedtech.moko.model.UrlVO;
+			import com.raisedtech.queueprocess.QueueProcessor;
+			
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+			public static var INSTANCE:Boolean=false;
+			
+			[Bindable]
+			private var names:String = "";
+			private var queueReadAlbums:QueueProcessor=new QueueProcessor();
+			[Bindable]
+			private var progress:Number=0;
+			
+			[Bindable]
+			private var tasks:ArrayCollection = new ArrayCollection();
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				stop()
+				PopUpManager.removePopUp(this);
+				INSTANCE=false;
+			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				if(!names)return;
+				var arr:Array = names.split(/\s+/);
+				stop()
+				queueReadAlbums=new QueueProcessor();
+				queueReadAlbums.addEventListener(Event.COMPLETE, queueReadAlbumsComplete);
+				queueReadAlbums.addEventListener(ProgressEvent.PROGRESS, onProgress);
+				for each (var i:String in arr) 
+				{
+					if(!i){
+						continue;
+					}
+					var url:String="http://www.moko.cc/post/" + i + "/list.html";;
+					var vo:UrlVO=new UrlVO(url);
+					vo.name=i;
+					tasks.addItem(vo);
+					queueReadAlbums.addTask(new NewGirlUrlVOTask(vo));
+				}
+				queueReadAlbums.execute();
+			}
+			
+			private function stop():void{
+				if(queueReadAlbums){
+					queueReadAlbums.stop();
+					queueReadAlbums.removeEventListener(Event.COMPLETE, queueReadAlbumsComplete);
+					queueReadAlbums.removeEventListener(ProgressEvent.PROGRESS, onProgress);
+					queueReadAlbums=null;
+				}
+			}
+			
+			private function queueReadAlbumsComplete(event:Event):void
+			{
+				stop()
+				
+			}
+			
+			protected function onProgress(event:ProgressEvent):void
+			{
+				var xx:Number =event.bytesLoaded / event.bytesTotal;
+				if(xx){
+					progress = xx;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:filters>
+		<s:DropShadowFilter blurX="10" blurY="10" distance="1" />
+	</s:filters>
+	<s:layout>
+		<s:VerticalLayout paddingBottom="20" paddingLeft="20" paddingRight="20" paddingTop="20"/>
+	</s:layout>
+	
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Spacer width="100%" />
+		<s:Button width="114" label="开始" click="button2_clickHandler(event)"/>
+		<s:Spacer width="100%" />
+		<s:Button label="关闭" click="button1_clickHandler(event)" />
+	</s:HGroup>
+	<s:Group width="100%">
+		<s:Line id="sample" width="100%">
+			<s:stroke>
+				<s:SolidColorStroke color="0xeeeeee" weight="1"/>
+			</s:stroke>
+		</s:Line>
+		<s:Line width="{progress*sample.width}">
+			<s:stroke>
+				<s:SolidColorStroke color="0x339933" weight="2"/>
+			</s:stroke>
+		</s:Line>
+	</s:Group>
+	<s:HGroup width="100%" height="100%" >
+		<s:TextArea text="@{names}" width="150" height="100%"/>
+		<s:List dataProvider="{tasks}" width="100%" height="100%" itemRenderer="com.raisedtech.moko.view.CategoryItemRenderer" />
+	</s:HGroup>
+	
+</s:BorderContainer>
