@@ -23,7 +23,7 @@ package com.raisedtech.moko.service
 
 		public function thumbup(id:String, callback:Function):void
 		{
-			this.doRequest("thumbup", callback, {id: id});
+			this.doRequest("thumbup", null, {id: id});
 		}
 
 		public function save(name:String, url:String,logo:String, callback:Function):void

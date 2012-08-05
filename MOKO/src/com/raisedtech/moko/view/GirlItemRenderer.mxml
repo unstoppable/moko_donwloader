@@ -8,6 +8,8 @@
 		<![CDATA[
 			import com.raisedtech.moko.model.Model;
 			private var loader:Loader = new Loader();
+			[Bindable]
+			private var thumbupChanger:String = "";
 			override public function  set data(value:Object):void{
 				super.data=value;
 				if(img) img.visible=false
@@ -37,7 +39,9 @@
 			protected function button1_clickHandler(event:MouseEvent):void
 			{
 				Model.thumbup(data.id);
-				
+				data.thumbup++;
+				thumbupChanger = " ";
+				thumbupChanger ="";
 			}
 			
 			protected function onLoaded(event:Event):void
@@ -79,7 +83,7 @@
 				 smooth="true" visible="false"/>
 		
 		<s:Label width="100%" text="{data.name}" y="160" left="10"/>
-		<s:Button  y="160" right="10" label="赞{data.thumbup}" click="button1_clickHandler(event)"
+		<s:Button  y="160" right="10" label="赞{thumbupChanger+data.thumbup}" click="button1_clickHandler(event)"
 				  icon="@Embed('../assets/icons/16x16/thumb_up.png')"/>
 		
 		<s:Button y="190" left="10" label="下载{data.count}" click="button2_clickHandler(event)"

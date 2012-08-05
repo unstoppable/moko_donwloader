@@ -69,12 +69,11 @@ package com.raisedtech.moko
 
 		public function set progress(value:Number):void
 		{
-			if (value <= 0 || isNaN(value) || isFinite(value))
+			if (value <= 0 || isNaN(value) || !isFinite(value))
 			{
 				value=0.01;
 			}
 			_progress=value;
-			trace(this,'_progress='+_progress);
 		}
 
 		protected function onProgress(event:ProgressEvent):void
@@ -147,10 +146,14 @@ package com.raisedtech.moko
 					if (-1 == arr.indexOf(temp[2]))
 					{
 						arr.push(temp[2]);
-						var vo:UrlVO=new UrlVO();
-						vo.name=temp[1];
-						vo.url="http://www.moko.cc" + temp[2];
-						categorys.addItem(vo);
+						for (var i:int = 1; i < 6; i++) 
+						{
+							var vo:UrlVO=new UrlVO();
+							vo.name=temp[1];
+							vo.url="http://www.moko.cc" + temp[2].replace("1.html",i+".html");
+							categorys.addItem(vo);
+						}
+						
 					}
 					temp=CATEGORY.exec(source);
 				}
@@ -223,7 +226,7 @@ package com.raisedtech.moko
 				{
 					arr.push(temp[2]);
 					var vo:UrlVO=new UrlVO();
-					vo.name=temp[1].replace(/\\\/:\*\?"<>\|/g, '');
+					vo.name=temp[1].replace(/[\\\/:\*\?"<>\|]+/g, '');
 					vo.url="http://www.moko.cc" + temp[2];
 					albums.addItem(vo);
 				}
@@ -243,13 +246,12 @@ package com.raisedtech.moko
 				{
 					arr.push(temp[1]);
 					var vo:UrlVO=new UrlVO();
-					vo.name=temp[2].replace(/\\\/:\*\?"<>\|/g, '');
+					vo.name=temp[2].replace(/[\\\/:\*\?"<>\|]+/g, '');
 					vo.url="http://www.moko.cc" + temp[1];
 					albums.addItem(vo);
 				}
 				temp=ALBUM1.exec(data);
 			}
-			;
 			return arr;
 		}
 
