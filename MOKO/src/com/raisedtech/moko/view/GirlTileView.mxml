@@ -5,6 +5,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.raisedtech.moko.model.Model;
+			
 			import mx.collections.ArrayCollection;
 			
 			import spark.events.IndexChangeEvent;
@@ -12,11 +13,24 @@
 			protected function buttonbar1_changeHandler(event:IndexChangeEvent):void
 			{	var a:ArrayCollection  = Model.getModel().list;
 				if(event.newIndex==0){
-					a.source.sortOn('count',Array.DESCENDING | Array.NUMERIC);
-				}else{
+					Tracker.track("推荐次数");
 					a.source.sortOn('thumbup',Array.DESCENDING | Array.NUMERIC);
+				}else{
+					Tracker.track("下载次数");
+					a.source.sortOn('count',Array.DESCENDING | Array.NUMERIC);
 				}
 				Model.getModel().list.refresh();
+			}
+			
+			protected function buttonbar2_changeHandler(event:IndexChangeEvent):void
+			{	var a:ArrayCollection  = Model.getModel().list;
+				if(event.newIndex==0){
+					Tracker.track("所有美女");
+					Model.getList(-1);
+				}else{
+					Model.getList(1);
+					Tracker.track("美空超级美女榜 第五季 ");
+				}
 			}
 			
 		]]>
@@ -35,7 +49,17 @@
 			</s:dataProvider>
 		</s:ButtonBar>
 		<s:Spacer width="100%"/>
+		<s:ButtonBar selectedIndex="0" change="buttonbar2_changeHandler(event)">
+			<s:dataProvider>
+				<s:ArrayList>
+					<fx:String>所有美女</fx:String>
+					<fx:String>美空超级美女榜 第五季 </fx:String>
+				</s:ArrayList>
+			</s:dataProvider>
+		</s:ButtonBar>
+		
 		<s:Label text="收录{Model.getModel().list.length}位" />
+		
 	</s:HGroup>
 	<s:List borderVisible="false" dataProvider="{Model.getModel().list}" width="100%" height="100%" itemRenderer="com.raisedtech.moko.view.GirlItemRenderer">
 		<s:layout>

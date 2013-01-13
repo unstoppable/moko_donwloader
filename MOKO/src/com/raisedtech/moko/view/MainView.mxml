@@ -44,6 +44,7 @@
 				event.stopImmediatePropagation();
 				var data:* = GirlItemRenderer(event.target).data;
 				downloader.user = data.url.replace('http:\/\/www.moko.cc\/post\/','').replace('\/list.html','');
+				Tracker.track("girl_download");
 				start(null);
 			}
 			

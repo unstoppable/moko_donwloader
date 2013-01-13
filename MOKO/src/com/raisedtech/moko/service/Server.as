@@ -16,9 +16,9 @@ package com.raisedtech.moko.service
 			super('http://www.raisedtech.com/iphone-ipa-png/');
 		}
 
-		public function list(callback:Function):void
+		public function list(cate:int, callback:Function):void
 		{
-			this.doRequest("list", callback);
+			this.doRequest("list", callback,{cate:cate});
 		}
 
 		public function thumbup(id:String, callback:Function):void

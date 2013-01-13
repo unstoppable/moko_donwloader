@@ -26,6 +26,12 @@
 				
 			}
 			
+			protected function feed(event:MouseEvent):void
+			{
+				Tracker.track("反馈");
+				FeedBackWindow.show();
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -53,5 +59,6 @@
 	<s:Label color="#AB4747" text="{info}"/>
 	<s:Spacer width="100%" />
 	<s:Button label="帮助" click="help(event)" icon="@Embed('../assets/icons/16x16/help.png')"/>
+	<s:Button chromeColor="#aaffaa" emphasized="true" label="反馈" click="feed(event)" icon="@Embed('../assets/icons/16x16/help.png')"/>
 	
 </s:HGroup>

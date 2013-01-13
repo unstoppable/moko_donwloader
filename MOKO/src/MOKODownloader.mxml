@@ -21,6 +21,7 @@
 			
 			import com.raisedtech.moko.model.Model;
 			import com.raisedtech.moko.view.AddGirlView;
+			import com.raisedtech.moko.view.FeedBackWindow;
 			
 			import mx.events.FlexEvent;
 			import mx.logging.Log;
@@ -42,7 +43,9 @@
 				URLRequestDefaults.userAgent='Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.46 Safari/536.5';
 				initLogging();
 				this.checkUpdate();
-				Model.getList();
+				Tracker.initTracker("http://www.raisedtech.com/iphone-ipa-png/tracker/record", FeedBackWindow.getAppName());
+				
+				Model.getList(-1);
 				
 				var bg:Shape = new Shape();
 				bg.graphics.beginBitmapFill(Bitmap(new BG_IMAGE()).bitmapData);
@@ -101,12 +104,15 @@
 			
 			protected function button1_clickHandler(event:MouseEvent):void
 			{
+				Tracker.track("help_close");
 				help.visible=false;
 			}
 			
 			protected function spiderview1_cancelHandler(event:Event):void
 			{
 				// TODO Auto-generated method stub
+				
+				Tracker.track("help_show");
 				help.visible=true;
 			}
 			

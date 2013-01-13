@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="800" height="480" close="titlewindow1_closeHandler(event)" title="建议反馈">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]
+			private var info:String = "";
+			
+			protected function http_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				info = "谢谢"
+				titlewindow1_closeHandler(null);
+				Alert.show("提交成功， 谢谢！");
+			}
+			
+			protected function http_faultHandler(event:FaultEvent):void
+			{
+				info = "对不对，有错误"
+			}
+			
+			protected function send(event:*=null):void
+			{
+				if(!check()){
+					info="有错误，请完善表单， 谢谢";
+					return;
+				}
+				var data:*={};
+				data.name=uname.text;
+				data.email=uemail.text;
+				data.subject=subject.text;
+				data.body=body.text;
+				data.verifyCode=""+verifyCode.selectedValue;
+				data.soft=getAppName();
+				http.send(data);
+				info = "正在提交";
+			}
+			
+			protected function check():Boolean
+			{
+				var pass:Boolean=true;
+				pass=unameVD.validate().type == ValidationResultEvent.VALID && pass;
+				pass=uemailVD.validate().type == ValidationResultEvent.VALID && pass;
+				pass=subjectVD.validate().type == ValidationResultEvent.VALID && pass;
+				return pass;
+			}
+			
+			protected function titlewindow1_closeHandler(event:CloseEvent):void
+			{
+				PopUpManager.removePopUp(this);
+				
+			}
+			
+			public static function show():void{
+				var feed:FeedBackWindow = PopUpManager.createPopUp(FlexGlobals.topLevelApplication as DisplayObject,FeedBackWindow,true) as FeedBackWindow;
+				PopUpManager.centerPopUp(feed);
+				
+			}
+			
+			public static function  getAppName():String
+			{
+				var appXml:XML = NativeApplication.nativeApplication.applicationDescriptor;
+				var ns:Namespace = appXml.namespace();
+				var appId:String = appXml.ns::id[0];
+				var appVersion:String = appXml.ns::version[0];
+				var appName:String = appXml.ns::filename[0];
+				var comname:String = appId+"_"+appVersion+"_"+appName;
+				return comname;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:HTTPService id="http" resultFormat="object" method="POST" 
+					   url="http://www.raisedtech.com/iphone-ipa-png/feedBack/save" 
+					   result="http_resultHandler(event)" fault="http_faultHandler(event)"/>
+		<s:RadioButtonGroup id="verifyCode" selectedValue="3" />
+		<mx:StringValidator id="unameVD" source="{uname}" property="text" required="true" maxLength="255"/>
+		<mx:StringValidator id="uemailVD" source="{uemail}" property="text" required="true" maxLength="255"/>
+		<mx:StringValidator id="subjectVD" source="{subject}" property="text" required="true" maxLength="255"/>
+	</fx:Declarations>
+	<s:Form x="0" y="0" width="100%" height="100%">
+		<s:FormHeading label="您有什么意见和建议？  {info}" width="100%"/>
+		<s:FormItem width="100%" label="您的名字">
+			<s:TextInput id="uname" width="300"/>
+		</s:FormItem>
+		<s:FormItem label="您的EMAIL">
+			<s:TextInput id="uemail" width="300"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="使用体验">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:RadioButton label="满意" value="3" groupName="verifyCode"/>
+			<s:RadioButton label="一般" value="2" groupName="verifyCode"/>
+			<s:RadioButton label="不爽" value="1" groupName="verifyCode"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="标题">
+			<s:TextInput id="subject" width="300"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="内容">
+			<s:TextArea id="body" width="100%" height="117"/>
+		</s:FormItem>
+		<s:FormItem width="100%">
+			<s:Button label="提交" emphasized="true" click="send()" enabled="{info != '正在提交'}"/>
+		</s:FormItem>
+	</s:Form>
+	
+	
+	
+</s:TitleWindow>

@@ -32,10 +32,10 @@ package com.raisedtech.moko.model
 		
 		public var loading:Boolean=true;
 
-		public static function getList():void
+		public static function getList(cate:int):void
 		{
 			getModel().loading=true;
-			getModel().server.list(Model.onData);
+			getModel().server.list(cate,Model.onData);
 		}
 
 		public static function save(name:String, url:String,logo:String, update:Boolean=true):void
